@@ -1,0 +1,75 @@
+---
+// src/pages/friends.astro
+import Layout from '../layouts/Layout.astro';
+
+// 模拟一些初始的友情链接数据（头像采用了生动可爱的 Notion 风格占位图，你可以随时修改）
+const friends = [
+  {
+    name: "蒋音象",
+    description: "以文会友，以友辅仁。",
+    url: "https://jiangyx.org",
+    avatar: "/images/avatar.webp"
+  },
+  {
+    name: "蒙需",
+    description: "我的朋友圈 ",
+    url: "https://jiangcl.com",
+    avatar: "https://www.blogsclub.org/blog/517/avatar/69356e5e024ac.jpg"
+  },
+  {
+    name: "教育部",
+    description: "教育部门户网站。",
+    url: "http://www.moe.gov.cn/index.html",
+    avatar: "https://api.dicebear.com/7.x/identicon/svg?seed=CalligraphySite"
+  }
+];
+---
+
+<Layout title="友链 - 蒋音象">
+  <div class="py-12 max-w-2xl mx-auto">
+    <h1 class="text-3xl font-serif font-bold mb-4 tracking-widest text-stone-900 dark:text-stone-50">
+      高山流水
+    </h1>
+    <p class="text-stone-500 dark:text-stone-400 mb-12 text-sm">
+      海内存知己，天涯若比邻。
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-16">
+      {friends.map(friend => (
+        <a 
+          href={friend.url} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="group p-5 rounded-2xl border border-stone-200/60 dark:border-stone-700/50 bg-white dark:bg-stone-800/10 hover:border-amber-500 dark:hover:border-amber-500 hover:shadow-md transition-all duration-300 flex items-center gap-4"
+        >
+          <div class="w-14 h-14 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden flex-shrink-0 border border-stone-200 dark:border-stone-700">
+            <img src={friend.avatar} alt={friend.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          </div>
+          <div class="overflow-hidden">
+            <h2 class="font-serif font-bold text-stone-900 dark:text-stone-100 group-hover:text-amber-600 dark:hover:text-amber-400 transition-colors truncate">
+              {friend.name}
+            </h2>
+            <p class="text-stone-500 dark:text-stone-400 text-xs mt-1.5 line-clamp-2 leading-relaxed">
+              {friend.description}
+            </p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="p-8 rounded-2xl bg-stone-100 dark:bg-stone-800/30 border border-stone-200/40 dark:border-stone-700/40">
+      <h2 class="text-lg font-serif font-bold mb-4 text-stone-900 dark:text-stone-100 flex items-center gap-2">
+        交换友链
+      </h2>
+      <p class="text-stone-600 dark:text-stone-400 text-sm leading-relaxed mb-6">
+        非常欢迎文化、艺术、校园生活或科技类博客交换链接。请通过电子邮件告诉我您的站点信息：
+      </p>
+      
+      <ul class="space-y-2 text-xs md:text-sm text-stone-600 dark:text-stone-400 font-mono bg-white dark:bg-stone-900/40 p-4 rounded-xl border border-stone-200/40 dark:border-stone-700/40 shadow-inner select-all">
+        <li><span class="text-stone-400">名称：</span>蒋音象</li>
+        <li><span class="text-stone-400">网址：</span>https://jiangyx.org</li>
+        <li><span class="text-stone-400">简介：</span>以文会友，以友辅仁。</li>
+      </ul>
+    </div>
+  </div>
+</Layout>

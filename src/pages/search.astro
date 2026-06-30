@@ -1,0 +1,98 @@
+---
+// src/pages/search.astro
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// 1. 获取所有博客和作品
+const allPosts = await getCollection('blog');
+const allProjects = await getCollection('projects');
+
+// 2. 将它们格式化为一个统一的数组，方便前端搜索
+const searchData = [
+  ...allPosts.map(post => ({
+    title: post.data.title,
+    description: post.data.description,
+    url: `/blog/${post.id}`,
+    type: '文章'
+  })),
+  ...allProjects.map(project => ({
+    title: project.data.title,
+    description: project.data.description,
+    url: `/projects`, // 作品目前都在统一的画廊页
+    type: '作品'
+  }))
+];
+---
+
+<Layout title="搜索 - 蒋音象">
+  <div class="py-12 max-w-2xl mx-auto min-h-[60vh]">
+    <h1 class="text-3xl font-serif font-bold mb-8 tracking-widest text-stone-900 dark:text-stone-50">
+      寻找墨迹
+    </h1>
+    
+    <div class="relative mb-8">
+      <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+        <svg class="w-5 h-5 text-stone-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <input 
+        type="text" 
+        id="search-input" 
+        class="block w-full p-4 pl-12 text-sm text-stone-900 border border-stone-300 rounded-2xl bg-stone-50 focus:ring-amber-500 focus:border-amber-500 dark:bg-stone-800 dark:border-stone-700 dark:placeholder-stone-400 dark:text-white transition-colors" 
+        placeholder="输入关键词，搜索文章标题或简介..." 
+        autocomplete="off"
+      />
+    </div>
+
+    <ul id="search-results" class="space-y-4">
+      <li class="text-stone-500 dark:text-stone-400 text-center py-8">
+        准备就绪，请输入关键词开始搜索。
+      </li>
+    </ul>
+  </div>
+
+  <script is:inline define:vars={{ searchData }}>
+    // 监听输入框事件
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      
+      // 清空结果
+      searchResults.innerHTML = '';
+
+      if (searchTerm.length === 0) {
+        searchResults.innerHTML = '<li class="text-stone-500 dark:text-stone-400 text-center py-8">准备就绪，请输入关键词开始搜索。</li>';
+        return;
+      }
+
+      // 过滤数据（匹配标题或描述）
+      const filteredData = searchData.filter(item => {
+        return item.title.toLowerCase().includes(searchTerm) || 
+               item.description.toLowerCase().includes(searchTerm);
+      });
+
+      // 渲染结果
+      if (filteredData.length === 0) {
+        searchResults.innerHTML = '<li class="text-stone-500 dark:text-stone-400 text-center py-8">未找到相关内容，请尝试其他关键词。</li>';
+        return;
+      }
+
+      filteredData.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <a href="${item.url}" class="block p-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 hover:border-amber-500 dark:hover:border-amber-500 transition-colors">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-2 py-0.5 text-[10px] bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 rounded">${item.type}</span>
+              <h3 class="text-lg font-bold text-stone-900 dark:text-stone-100">${item.title}</h3>
+            </div>
+            <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-1">${item.description}</p>
+          </a>
+        `;
+        searchResults.appendChild(li);
+      });
+    });
+  </script>
+</Layout>

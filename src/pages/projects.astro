@@ -1,0 +1,36 @@
+---
+// src/pages/projects.astro
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// 获取所有作品
+const projects = await getCollection('projects');
+---
+
+<Layout title="作品 - 蒋音象">
+  <div class="py-12">
+    <h1 class="text-3xl font-serif font-bold mb-4 tracking-widest text-stone-900 dark:text-stone-50">
+      笔墨纵横
+    </h1>
+    <p class="text-stone-500 dark:text-stone-400 mb-12 text-sm">
+      这里记录了我日常临帖与创作的书法作品。
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {projects.map(project => (
+        <div class="group bg-stone-100 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-700/50 rounded-2xl overflow-hidden shadow-sm">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src={project.data.image} alt={project.data.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+          <div class="p-6">
+            <h2 class="text-xl font-serif font-bold mb-2">{project.data.title}</h2>
+            <p class="text-stone-600 dark:text-stone-400 text-sm mb-4 leading-relaxed">{project.data.description}</p>
+            <div class="text-xs text-stone-400">
+              创作于：{new Date(project.data.pubDate).toLocaleDateString('zh-CN')}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>

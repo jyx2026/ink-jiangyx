@@ -1,23 +1,69 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+// src/layouts/Layout.astro
+const { title } = Astro.props;
+---
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+	<script is:inline>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+
+  if (theme === 'light') {
+    document.documentElement.classList.remove('dark');
+  } else {
+    document.documentElement.classList.add('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script>
+    <title>{title}</title>
+  </head>
+  <body class="bg-stone-50 text-stone-900 dark:bg-stone-900 dark:text-stone-100 transition-colors duration-300 antialiased">
+    
+	<nav class="max-w-4xl mx-auto px-6 py-8 flex justify-between items-center">
+	<a href="/" class="font-serif text-2xl font-bold tracking-widest text-stone-900 dark:text-stone-50">蒋音象</a>
+	<div class="flex items-center space-x-6 text-sm font-medium text-stone-600 dark:text-stone-400">
+		<a href="/projects" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">作品</a>
+		<a href="/blog" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">文章</a>
+		<a href="/about" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">关于</a>
+		<a href="/friends" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">友链</a>
+		<a href="/search" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors" title="全站搜索">
+		<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+		</a>
+
+		<button id="theme-toggle" class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors text-base" aria-label="切换主题">
+		<span class="dark:hidden">🌙</span>
+		<span class="hidden dark:inline">☀️</span>
+		</button>
+	</div>
+	</nav>
+
+	<script>
+	const handleToggleClick = () => {
+		const element = document.documentElement;
+		element.classList.toggle("dark");
+
+		const isDark = element.classList.contains("dark");
+		localStorage.setItem("theme", isDark ? "dark" : "light");
+	};
+
+	document.getElementById("theme-toggle")?.addEventListener("click", handleToggleClick);
+	</script>
+    
+    <main class="max-w-4xl mx-auto px-6 min-h-[70vh]">
+      <slot /> </main>
+
+    <footer class="text-center py-12 text-stone-500 text-sm mt-12">
+      <p>&copy; 2026 <a href="https://jiangyx.org">蒋音象</a>. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

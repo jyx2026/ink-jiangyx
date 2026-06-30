@@ -1,0 +1,46 @@
+---
+// src/pages/blog/[id].astro
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+// 1. 告诉 Astro 为哪些文章生成独立的详情页
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+// 2. 渲染 Markdown 内容（Astro 最新 API）
+const { Content } = await render(post);
+---
+
+<Layout title={`${post.data.title} - 蒋音象`}>
+  <article class="py-12 max-w-2xl mx-auto">
+    <header class="mb-8 border-b border-stone-200 dark:border-stone-800 pb-6">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold mb-4 text-stone-950 dark:text-stone-50 leading-tight">
+        {post.data.title}
+      </h1>
+      <div class="flex items-center gap-4 text-sm text-stone-400">
+        <time>{new Date(post.data.pubDate).toLocaleDateString('zh-CN')}</time>
+        {post.data.tags && (
+          <div class="flex gap-2">
+            {post.data.tags.map(tag => (
+              <span class="bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2 py-0.5 rounded text-xs">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+
+    <div class="prose prose-stone dark:prose-invert max-w-none 
+                prose-headings:font-serif prose-headings:font-bold 
+                prose-p:leading-relaxed prose-p:text-stone-700 dark:prose-p:text-stone-300">
+      <Content />
+    </div>
+  </article>
+</Layout>
