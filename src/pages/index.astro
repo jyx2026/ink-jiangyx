@@ -3,15 +3,15 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-// 1. 获取最新作品（按时间倒序排列，并截取前 4 幅）
+// 1. 获取最新作品（按时间倒序排列，并截取前 2 幅）
 const latestProjects = (await getCollection('projects'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
+  .slice(0, 2);
 
-// 2. 获取最新文章（按时间倒序排列，并截取前 5 篇）
+// 2. 获取最新文章（按时间倒序排列，并截取前 3 篇）
 const latestPosts = (await getCollection('blog'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 5);
+  .slice(0, 3);
 ---
 
 <Layout title="蒋音象 - 以文会友，以友辅仁">

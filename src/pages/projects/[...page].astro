@@ -1,0 +1,95 @@
+---
+// src/pages/projects/[page].astro
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// 1. 必须导出 getStaticPaths 函数来处理分页
+export async function getStaticPaths({ paginate }) {
+  const projects = (await getCollection('projects'))
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  // 每页固定显示 4 幅作品
+  return paginate(projects, { pageSize: 4 });
+}
+
+// 2. 从 Astro.props 中获取分页数据对象 page
+const { page } = Astro.props;
+---
+
+<Layout title={`作品 - 第 ${page.currentPage} 页 - 蒋音象`}>
+  <div class="py-12">
+    <h1 class="text-3xl font-serif font-bold mb-4 tracking-widest text-stone-900 dark:text-stone-50">
+      笔墨纵横
+    </h1>
+    <p class="text-stone-500 dark:text-stone-400 mb-12 text-sm">
+      这里记录了我日常临帖与创作的书法作品。
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+      {page.data.map(project => (
+        <div class="group bg-stone-100 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-700/50 rounded-2xl overflow-hidden shadow-sm">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src={project.data.image} alt={project.data.title} class="project-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-zoom-in" />
+          </div>
+          <div class="p-6">
+            <h2 class="text-xl font-serif font-bold mb-2">{project.data.title}</h2>
+            <p class="text-stone-600 dark:text-stone-400 text-sm mb-4 leading-relaxed">{project.data.description}</p>
+            <div class="text-xs text-stone-400">
+              创作于：{new Date(project.data.pubDate).toLocaleDateString('zh-CN')}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <nav class="flex justify-between items-center border-t border-stone-200 dark:border-stone-800 pt-6">
+      <div>
+        {page.url.prev ? (
+          <a href={page.url.prev} class="px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 text-sm font-medium transition-colors">&larr; 上一页</a>
+        ) : (
+          <span class="px-4 py-2 text-stone-400 dark:text-stone-600 text-sm font-medium cursor-not-allowed">&larr; 上一页</span>
+        )}
+      </div>
+
+      <span class="text-sm text-stone-500">{page.currentPage} / {page.lastPage}</span>
+
+      <div>
+        {page.url.next ? (
+          <a href={page.url.next} class="px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 text-sm font-medium transition-colors">下一页 &rarr;</a>
+        ) : (
+          <span class="px-4 py-2 text-stone-400 dark:text-stone-600 text-sm font-medium cursor-not-allowed">下一页 &rarr;</span>
+        )}
+      </div>
+    </nav>
+  </div>
+
+  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 items-center justify-center overflow-hidden cursor-grab">
+    <button id="lightbox-close" class="absolute top-6 right-6 text-stone-400 hover:text-white transition-colors z-50 p-2" aria-label="关闭">
+      <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="放大查看" class="max-w-none transform transition-transform duration-75 ease-out pointer-events-none select-none" />
+  </div>
+
+  <script is:inline>
+    // （这里保持你之前写的 lightbox 脚本代码完全一致即可，无需修改）
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeBtn = document.getElementById('lightbox-close');
+    const triggers = document.querySelectorAll('.project-image');
+    let isDragging = false; let startX, startY; let translateX = 0, translateY = 0; let scale = 1.2;
+    const updateTransform = () => { lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`; };
+    triggers.forEach(img => {
+      img.addEventListener('click', (e) => {
+        lightboxImg.src = e.target.src; lightbox.classList.remove('hidden'); lightbox.classList.add('flex');
+        translateX = 0; translateY = 0; scale = 1.2; updateTransform();
+      });
+    });
+    const closeLightbox = () => { lightbox.classList.add('hidden'); lightbox.classList.remove('flex'); };
+    closeBtn.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+    lightbox.addEventListener('mousedown', (e) => { if (e.target === closeBtn) return; isDragging = true; startX = e.clientX - translateX; startY = e.clientY - translateY; lightbox.classList.add('cursor-grabbing'); });
+    window.addEventListener('mousemove', (e) => { if (!isDragging) return; translateX = e.clientX - startX; translateY = e.clientY - startY; updateTransform(); });
+    window.addEventListener('mouseup', () => { isDragging = false; lightbox.classList.remove('cursor-grabbing'); });
+    lightbox.addEventListener('wheel', (e) => { e.preventDefault(); scale += e.deltaY * -0.0015; scale = Math.min(Math.max(0.5, scale), 4); updateTransform(); }, { passive: false });
+  </script>
+</Layout>
