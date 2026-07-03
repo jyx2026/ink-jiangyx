@@ -2,7 +2,7 @@
 title: "临《破阵子·为陈同甫赋壮词以寄之》"
 description: "醉里挑灯看剑，梦回吹角连营。八百里分麾下炙，五十弦翻塞外声，沙场秋点兵。"
 pubDate: 2025-11-07
-image: "/images/projects/破阵子-为陈同甫赋壮词以寄之.webp" 
+image: "/images/projects/pzzwctffzcyjz.webp" 
 featured: true
 ---
 

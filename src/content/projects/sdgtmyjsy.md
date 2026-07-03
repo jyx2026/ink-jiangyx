@@ -2,7 +2,7 @@
 title: "临《水调歌头·明月几时有》"
 description: "明月几时有？把酒问青天。不知天上宫阙，今夕是何年。"
 pubDate: 2026-03-16
-image: "/images/projects/水调歌头-明月几时有.webp" 
+image: "/images/projects/sdgtmyjsy.webp" 
 featured: true
 ---
 
