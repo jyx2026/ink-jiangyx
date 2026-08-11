@@ -1,8 +1,8 @@
 ---
-title: "临《兰亭序》"
+title: "临《兰亭序》第一部分"
 description: "永和九年，岁在癸丑，暮春之初，会于会稽山阴之兰亭，修禊事也。"
 pubDate: 2026-06-28
-image: "/images/projects/lantingxu.webp" 
+image: "/images/projects/lantingxu1.webp" 
 featured: true
 ---
 
